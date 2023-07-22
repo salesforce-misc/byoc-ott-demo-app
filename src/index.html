@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/slds/styles/salesforce-lightning-design-system.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="icon" href="data:;base64,=">
+    <title>BYOC OTT Demo App</title>
+  </head>
+  <body>
+
+    <div class="slds-grid slds-gutters demo-app-body">
+      <div class="slds-col slds-m-top_xx-large slds-m-bottom_xx-large slds-m-left_xx-large slds-m-right-small demo-app-setup-panel">
+
+        <div class="slds-text-longform">
+          <h3 class="slds-text-heading_large">Inbound/Outbound Message Demo</h3>
+          <p class=".slds-text-body_regular">Welcome to our interactive demo page, designed to help you test the features of inbound and outbound messaging. To get started, customize the settings in the box below, and begin your conversation by texting in the conversation box on the right.</p>
+        </div>
+
+        <div class="slds-m-around_x-large">
+          <article class="slds-card">
+            <div class="slds-p-top_large slds-p-left_large slds-p-right_large slds-p-bottom_x-large">
+              <div class="slds-card__header">
+                <header class="slds-media">
+                  <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                      <span>Demo Settings</span>
+                    </h2>
+                  </div>
+                </header>
+              </div>
+              <form id="settingsForm"> 
+                <div class="slds-form slds-p-left_small">
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="authorizationContext">Conversation ChannelDefinition API Name:</label>
+                    <div class="slds-form-element__control">
+                      <input type="text" id="authorizationContext" name="authorizationContext" placeholder="Type ConversationChannelDefinition API Name…" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="conversationAddressIdentifier">Conversation Address Identifier:</label>
+                    <div class="slds-form-element__control">
+                      <input type="text" id="conversationAddressIdentifier" name="conversationAddressIdentifier" placeholder="Type Conversation Address Identifier…" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="endUserClientIdentifier">End User Client Identifier:</label>
+                    <div class="slds-form-element__control">
+                      <input type="text" id="endUserClientIdentifier" name="endUserClientIdentifier" placeholder="Type End User Client Identifier…" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="customEventChnlAddrIdField">Custom Event Channel Address Id Field:</label>
+                    <div class="slds-form-element__control">
+                      <input type="text" id="customEventChnlAddrIdField" name="customEventChnlAddrIdField" placeholder="Type Custom Event Channel Address Id Field…" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="customEventPayloadField">Custom Event Payload Field:</label>
+                    <div class="slds-form-element__control">
+                      <input type="text" id="customEventPayloadField" name="customEventPayloadField" placeholder="Type Custom Event Payload Field…" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="customEventRecipientField">Custom Event Recipient Field:</label>
+                    <div class="slds-form-element__control">
+                      <input type="text" id="customEventRecipientField" name="customEventRecipientField" placeholder="Custom Event Recipient Field…" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_stacked">
+                    <div class="slds-form-element__control">
+                      <div class="slds-p-top_small slds-p-bottom_small">
+                        <button type="submit" class="slds-button slds-button_brand slds-float_right">Update</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </article>
+        </div>
+
+      </div>
+      <div class="slds-col slds-m-top_xx-large slds-m-bottom_xx-large slds-m-left_small slds-m-right_xx-large demo-app-messaging-panel">
+        <div class="slds-box">
+          <section role="log" class="slds-chat">
+            <ul id="chatList" class="slds-chat-list slds-scrollable demo-app-message-list">
+            </ul>
+          </section>
+        </div>
+        <form id="messageForm" enctype="multipart/form-data"> 
+          <div class="slds-m-top_medium slds-m-bottom_medium flex-row">
+            <input type="file" id="attachment" name="attachment">
+              <!-- button class="slds-button slds-button_icon slds-button_icon-border slds-button_icon-medium" title="Attach a file">
+                <svg class="slds-button__icon" aria-hidden="true">
+                  <use xlink:href="/slds/icons/utility-sprite/svg/symbols.svg#attach"></use>
+                </svg>
+                <span class="slds-assistive-text">Attach a file</span>
+              </button -->
+          </div>
+          <div class="slds-p-bottom_medium flex-row">
+            <div class="slds-form-element__control slds-grow demo-app-inbound-message-input">
+              <input type="text" id="message" name="message" placeholder="Type message…" class="slds-input" />
+            </div>
+            <div class="slds-no-flex">
+              <button type="submit" class="slds-button slds-button_brand slds-float_right demo-app-inbound-message-send-btn">Send</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/script/main.js"></script>
+  </body>
+</html>

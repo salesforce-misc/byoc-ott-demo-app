@@ -1,0 +1,36 @@
+{
+  "name": "byoc-ott-demo-app",
+  "version": "0.1.0",
+  "description": "BYOC OTT demo app",
+  "engines": {
+    "node": "16.x"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.8.17",
+    "@grpc/proto-loader": "^0.7.0",
+    "@salesforce-ux/design-system": "^2.21.1",
+    "avro-js": "^1.11.1",
+    "axios": "^0.27.2",
+    "certifi": "^14.5.15",
+    "dotenv": "^16.0.1",
+    "express": "^4.15.2",
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.5-lts.1",
+    "node-cache": "^5.1.2",
+    "node-jose": "^2.1.1",
+    "uuid": "^9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.soma.salesforce.com/BYOC/byoc-ott-demo-app"
+  },
+  "keywords": [
+    "byoc"
+  ],
+  "license": "MIT"
+}
