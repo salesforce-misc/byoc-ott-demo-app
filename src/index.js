@@ -117,29 +117,38 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
   res.json(responseData);
 });
 
+
 // Register custom event to send reply message
 let repliedMessages = [];
 let msgId = 1;
+let sendMessageTimeoutId;
+
+function sendMessageAtInterval(interval, res) {
+  console.log(`repliedMessages: ${JSON.stringify(repliedMessages)}`);
+  while (repliedMessages.length) {
+    let msg = repliedMessages.shift();
+
+    console.log(`\n====== reply message from message queue: `, msg);
+
+    res.write(`event: replymsg\n`);
+    res.write(`data: ${msg}\n`);
+    res.write(`id: ${msgId}\n\n`);
+    msgId++;
+  }
+  sendMessageTimeoutId = setTimeout(sendMessageAtInterval.bind(null, interval, res), interval);
+}
+
 app.get('/replyMessage', (req, res) => {
+  if (sendMessageTimeoutId) {
+    clearTimeout(sendMessageTimeoutId);
+  }
+
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive'
   });
-
-  setInterval(function() {
-    while(repliedMessages.length > 0) {
-      let msg = repliedMessages.shift();
-      //console.log(`\n====== reply message from message queue: `, msg);
-
-      if (msg) {
-        res.write(`event: replymsg\n`);
-        res.write(`data: ${msg}\n`);
-        res.write(`id: ${msgId}\n\n`);
-        msgId++;
-      }
-    }
-  }, 1000);
+  sendMessageAtInterval(1000, res);
 });
 
 // Register endpoint to refresh SFDC access token
@@ -237,6 +246,7 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
             replyMessageText,
             recipientUserName
           });
+
           repliedMessages.push(replyObjStr);
         });
       } else {
