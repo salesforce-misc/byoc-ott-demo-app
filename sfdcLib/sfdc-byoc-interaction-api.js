@@ -177,7 +177,6 @@ async function sendSFInboundMessageDeliveryFailedInteraction(entryId, interactio
 
 function getSFInboundTextMessageFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, message) {
   return {
-    "id": "f8f81c06-c06a-4784-b96c-ca95d3321bd9",
     "to": conversationAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
@@ -201,7 +200,6 @@ function getSFInboundTextMessageFormData(entryId, conversationAddressIdentifier,
 
 function getSFInboundAttachmentMessageFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, message, contentLength) {
   return {
-    "id": "f8f81c06-c06a-4784-b96c-ca95d3321bd9",
     "to": conversationAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
@@ -218,7 +216,6 @@ function getSFInboundAttachmentMessageFormData(entryId, conversationAddressIdent
 function getSFInboundTypingIndicatorFormData(conversationAddressIdentifier, endUserClientIdentifier, entryType) {
   const uuid = uuidv4();
   return {
-    "id": "f8f81c06-c06a-4784-b96c-ca95d3321bd9",
     "to": conversationAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
@@ -236,7 +233,6 @@ function getSFInboundTypingIndicatorFormData(conversationAddressIdentifier, endU
 function getSFInboundMessageDeliveryFailedFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, errorCode) {
   const uuid = uuidv4();
   return {
-    "id": "f8f81c06-c06a-4784-b96c-ca95d3321bd9",
     "to": conversationAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
@@ -264,7 +260,8 @@ function getInboundMessageRequestHeader(accessToken, orgId, authorizationContext
       "Content-Type": "multipart/form-data",
       "Accept": "application/json",
       "OrgId": orgId,
-      "AuthorizationContext": authorizationContext
+      "AuthorizationContext": authorizationContext,
+      "RequestId": "f8f81c06-c06a-4784-b96c-ca95d3321bd9"
     }
   };
 }
