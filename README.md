@@ -50,5 +50,121 @@ In "Demo Settings" part, you can change values for fields and click the Update b
 
 In "Messaging component" part, enter a message string in the edit box, click Send button to send inbound messages. You can also click the Choose File button to select a file attached to the message. If all settings are configured properly in the Salesforce app, you should get an inbound message or message with attachment in the Messaging Session record detail page in the Salesforce app.
 
-## Notes
-- TBA
+## Example requests
+You can also use curl commands below directly test requests for different entry types.
+
+Follow instructions in [Connected App](https://git.soma.salesforce.com/service-cloud-realtime/scrt2-interaction-service/blob/master/CONNECTED_APP.md) to setup connected app and generate access token which will be used in example curl commands below.
+
+Example request sending interaction, be sure to replace placeholder values `<..>` and `attachments` part can be optional.
+
+- Interaction request with entryType "Message"
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+  \"to\": \"<ChannelAddressIdentifier>\",
+  \"from\": \"<EndUserClientIdentifier>\",
+  \"interactions\": [{
+    \"timestamp\": 1688190840000,
+    \"interactionType\": \"EntryInteraction\",
+    \"payload\": {
+      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"entryType\": \"Message\",
+      \"abstractMessage\": {
+        \"messageType\": \"StaticContentMessage\",
+        \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+        \"staticContent\": {
+          \"formatType\": \"Text\",
+          \"text\": \"Hi there\"
+        }
+      }
+    }
+  }]
+};type=application/json" http://localhost:8085/api/v1/interactions
+```
+
+- Interaction request with entryType "TypingStartedIndicator"
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data"  -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+  \"to\": \"<ChannelAddressIdentifier>\",
+  \"from\": \"<EndUserClientIdentifier>\",
+  \"interactions\": [{
+    \"timestamp\": 1688190840000,
+    \"interactionType\": \"EntryInteraction\",
+    \"payload\": {
+      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"entryType\": \"TypingStartedIndicator\",
+      \"timestamp\": 1688190840000
+    }
+  }]
+};type=application/json" http://localhost:8085/api/v1/interactions
+```
+
+- Interaction request with entryType "TypingStoppedIndicator"
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+  \"to\": \"<ChannelAddressIdentifier>\",
+  \"from\": \"<EndUserClientIdentifier>\",
+  \"interactions\": [{
+    \"timestamp\": 1688190840000,
+    \"interactionType\": \"EntryInteraction\",
+    \"payload\": {
+      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"entryType\": \"TypingStoppedIndicator\",
+      \"timestamp\": 1688190840000
+    }
+  }]
+};type=application/json" http://localhost:8085/api/v1/interactions
+```
+
+- Interaction request with entryType "MessageDeliveryFailed"
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data"  -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+  \"to\": \"<ChannelAddressIdentifier>\",
+  \"from\": \"<EndUserClientIdentifier>\",
+  \"interactions\": [{
+    \"timestamp\": 1688190840000,
+    \"interactionType\": \"EntryInteraction\",
+    \"payload\": {
+      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"entryType\": \"MessageDeliveryFailed\",
+      \"failedConversationEntryIdentifier\": \"<FailedConversationEntryIdentifier>\",
+      \"recipient\": {
+         \"appType\": \"11\",
+         \"subject\": \"<EndUserClientIdentifier>\",
+         \"role\": \"4\"
+      },
+      \"errorCode\": \"<ErrorCode>\"
+    }
+  }]
+};type=application/json" http://localhost:8085/api/v1/interactions
+```
+
+- Interaction request with file attachment
+
+Prerequisites for getting file attachment upload working in local
+- Request access with PCSKDeveloperRole to test1-uswest2 AWS account using https://dashboard.prod.aws.jit.sfdc.sh/
+- The above access request should get auto-approved.
+- Click on Get Credentials -> Reveal Secrets to view the AWS credentials.
+- Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY & AWS_SESSION_TOKEN in your run configuration environment variables in your IDE. Use the above credential values from the previous step.
+- Login into AWS console for the test1-uswest2 account and create a new S3 bucket for local use.
+- In applcation.properties in your local, set interactionservice.inbound.files.bucket with the name of the S3 bucket you just created in the previous step.
+- Also in application.properties, set other attachment related properties. See application.properties.example file for details.
+- Please delete the bucket once local testing is complete.
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+  \"to\": \"<ChannelAddressIdentifier>\",
+  \"from\": \"<EndUserClientIdentifier>\",
+  \"interactions\": [{
+    \"timestamp\": 1688190840000,
+    \"interactionType\": \"AttachmentInteraction\",
+    \"id\": \"g8904eb6-5352-4c5e-adf6-5f100572cf6e\",
+    \"attachmentIndex\": 0,
+    \"contentLength\": 10000,
+    \"text\": \"This is my file\"
+  }]
+};type=application/json" -F "attachments=@/Users/drohra/Downloads/image.png" http://localhost:8085/api/v1/interactions
+```
