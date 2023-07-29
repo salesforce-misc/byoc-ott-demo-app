@@ -1,5 +1,5 @@
 # BYOC Inbound/Outbound Message demo app
-This interactive demo app is designed to help you test the features of inbound/outbound messaging and attachment for inbound message after your custom channel messaging configuration is done. It also allows you to customize the settings of "CCD API Name", "Conversation Address Identifier", and "End User Client Identifier" to test different custom channels, conversations, and end users.
+This interactive demo app is designed to help you test the features of inbound/outbound messaging and attachment for inbound messages after your custom channel messaging configuration is done. It also allows you to customize the settings of "Conversation Channel Definition API Name", "Conversation Address Identifier", "End User Client Identifier", "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" to test different custom channels, conversations, and end users.
 
 ## Setup
 
@@ -7,17 +7,17 @@ This interactive demo app is designed to help you test the features of inbound/o
 $ git clone https://git.soma.salesforce.com/BYOC/byoc-ott-demo-app.git
 $ cd byoc-ott-demo-app
 $ cp .env.example .env
-$ vi .env (Replace all place holder vars marked inside <> accordingly shown as next section Configuration)
+$ vi .env (Replace all placeholder vars marked inside <> accordingly shown as next section Configuration)
 $ npm install
 $ node . (Start the app server)
 
-Then open browser and load url: http://localhost:3000/
+Then open browser and load the url: http://localhost:3000
 ```
 
 ## Salesforce Core Setup
 
 - Create a [Connected App](https://git.soma.salesforce.com/service-cloud-realtime/scrt2-interaction-service/blob/master/CONNECTED_APP.md).
-- In the connected app setup above, get private key and connected app consumer key which will be set in the configuration shown below.
+- In the connected app setup above, get the connected app consumer key and private key which will be set as values for keys SF_CONSUMER_KEY and SF_PRIVATE_KEY respectively in the configuration shown below.
 
 ## Configuration
 Add the following config vars to the .env file.
@@ -44,7 +44,11 @@ PORT=3000
 ```
 
 ## Instructions for using demo app
-- TBA
+After load the url: http://localhost:3000 in browser, the demo app page is displayed with two parts: "Demo Settings" on left hand side and "Messaging component" on right hand side.
+
+In "Demo Settings" part, you can change values for fields and click the Update button to apply updated settings to test different custom channels, conversations, and end users.
+
+In "Messaging component" part, enter a message string in the edit box, click Send button to send inbound messages. You can also click the Choose File button to select a file attached to the message. If all settings are configured properly in the Salesforce app, you should get an inbound message or message with attachment in the Messaging Session record detail page in the Salesforce app.
 
 ## Notes
 - TBA
