@@ -51,7 +51,7 @@ In "Demo Settings" part, you can change values for fields and click the Update b
 In "Messaging component" part, enter a message string in the edit box, click Send button to send inbound messages. You can also click the Choose File button to select a file attached to the message. If all settings are configured properly in the Salesforce app, you should get an inbound message or message with attachment in the Messaging Session record detail page in the Salesforce app.
 
 ## Example requests
-You can also use curl commands below directly test requests for different entry types.
+You can also use curl commands below to directly test requests for different interactionType: "EntryInteraction" and "AttachmentInteraction".
 
 Follow instructions in [Connected App](https://git.soma.salesforce.com/service-cloud-realtime/scrt2-interaction-service/blob/master/CONNECTED_APP.md) to setup connected app and generate access token which will be used in example curl commands below.
 
