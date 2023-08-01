@@ -17,8 +17,26 @@
         </div>
 
         <div class="slds-m-around_x-large">
+
           <article class="slds-card">
-            <div class="slds-p-top_large slds-p-left_large slds-p-right_large slds-p-bottom_x-large">
+            <div class="demo-app-setup-msg-banner" id="demo-app-setup-msg-banner">
+              <div class="slds-scoped-notification slds-media slds-media_center slds-theme_success demo-app-setup-msg" role="status">
+                <div class="slds-media__figure">
+                  <span class="slds-icon_container slds-icon-utility-success" title="success">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                      <use xlink:href="/slds/icons/utility-sprite/svg/symbols.svg#success"></use>
+                    </svg>
+                    <span class="slds-assistive-text">success</span>
+                  </span>
+                </div>
+                <div class="slds-media__body">
+                  <p>Success! Your settings has been updated.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="slds-p-top_large slds-p-left_large slds-p-right_large slds-p-bottom_x-large demo-app-setup-form">
               <div class="slds-card__header">
                 <header class="slds-media">
                   <div class="slds-media__body">
@@ -28,6 +46,7 @@
                   </div>
                 </header>
               </div>
+
               <form id="settingsForm"> 
                 <div class="slds-form slds-p-left_small">
                   <div class="slds-form-element slds-form-element_stacked">

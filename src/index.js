@@ -23,7 +23,8 @@ const {
   SF_ORG_ID,
   SF_AUTHORIZATION_CONTEXT,
   CONVERSATION_ADDRESS_IDENTIFIER,
-  END_USER_CLIENT_IDENTIFIER
+  END_USER_CLIENT_IDENTIFIER,
+  SF_SUBJECT
 } = process.env;
 
 // cache settings in node cache
@@ -75,6 +76,8 @@ app.post('/sendsettings', jsonParser, (req, res) => {
   settingsCache.set("customEventChnlAddrIdField", req.body.customEventChnlAddrIdField);
   settingsCache.set("customEventPayloadField", req.body.customEventPayloadField);
   settingsCache.set("customEventRecipientField", req.body.customEventRecipientField);
+
+  res.json('{}');
 });
 
 // Register getsettings endpoint
@@ -85,7 +88,8 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
     endUserClientIdentifier: END_USER_CLIENT_IDENTIFIER,
     customEventChnlAddrIdField: SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD,
     customEventPayloadField: SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD,
-    customEventRecipientField: SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD
+    customEventRecipientField: SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD,
+    sfSubject: SF_SUBJECT
   };
 
   let authorizationContext = settingsCache.get("authorizationContext");
@@ -124,7 +128,6 @@ let msgId = 1;
 let sendMessageTimeoutId;
 
 function sendMessageAtInterval(interval, res) {
-  console.log(`repliedMessages: ${JSON.stringify(repliedMessages)}`);
   while (repliedMessages.length) {
     let msg = repliedMessages.shift();
 
@@ -148,7 +151,7 @@ app.get('/replyMessage', (req, res) => {
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive'
   });
-  sendMessageAtInterval(1000, res);
+  sendMessageAtInterval(100, res);
 });
 
 // Register endpoint to refresh SFDC access token
@@ -203,9 +206,10 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
 
           // #1: retrieve channel address id
           let channelAddressIdField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD);
-          console.log('\n====== channelAddressIdField: ', channelAddressIdField);
+          let conversationAddressIdFromSettings = settingsCache.get("conversationAddressIdentifier");
+          console.log('\n====== channelAddressIdField / conversationAddressIdFromSettings: ', ((channelAddressIdField && channelAddressIdField.string) ? channelAddressIdField.string: 'null'), conversationAddressIdFromSettings);
 
-          if (!channelAddressIdField) {
+          if (!channelAddressIdField || !channelAddressIdField.string || channelAddressIdField.string !== conversationAddressIdFromSettings) {
             return;
           }
 
@@ -226,6 +230,19 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
           let replyMessageText = getFieldValue(payloadFieldObj, 'text');
           console.log('\n====== replyMessageText: ', replyMessageText);
 
+          let formatType = getFieldValue(payloadFieldObj, "formatType");
+          let attachmentName = null;
+          let attachmentUrl = null;
+          if (formatType === "Attachments") {
+            let attachments = getFieldValue(payloadFieldObj, 'attachments');
+            if (attachments.length > 0) {
+              attachmentName = getFieldValue(attachments[0], 'name');
+              attachmentUrl = getFieldValue(attachments[0], 'url');
+            }
+          }
+          console.log('\n====== attachmentName / attachmentUrl: ', attachmentName, attachmentUrl);
+
+ 
            // #3: retrieve recipient
           let recipientField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD);
           console.log('\n====== recipientField: ', recipientField);
@@ -244,6 +261,8 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
           let replyObjStr = JSON.stringify({
             channelAddressIdFieldVal,
             replyMessageText,
+            attachmentName,
+            attachmentUrl,
             recipientUserName
           });
 

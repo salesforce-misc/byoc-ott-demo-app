@@ -1,4 +1,8 @@
 const SERVER_URL = "http://localhost:3000";
+let chatList;
+let sfSubject = "Agent";
+let endUserClientName = "End User Client";
+let typingStartedReady = true;
 
 window.addEventListener("load", () => {
   // Register settings form submit event listener
@@ -25,6 +29,12 @@ window.addEventListener("load", () => {
     .then((res) => {
       if (res.status == 200) {
         console.log(res);
+        let msgBanner = document.getElementById("demo-app-setup-msg-banner");
+        let cssShow = "demo-app-setup-msg-banner-show";
+        msgBanner.classList.add(cssShow);
+        setTimeout(function() {
+          msgBanner.classList.remove(cssShow);
+        }, 4000);
       }
     })
     .catch((err) => {
@@ -70,13 +80,13 @@ window.addEventListener("load", () => {
         throw err;
     });
 
-    let chatList = document.getElementById('chatList');
-
     // Add attachment for outbound message in chatList if any
+    let originalFileName = null;
+    let fileName = null;
     if (messageForm.elements.attachment.value) {
       let parts = messageForm.elements.attachment.value.split('\\');
-      let originalFileName = parts.pop();
-      let fileName = originalFileName;
+      originalFileName = parts.pop();
+      fileName = originalFileName;
       parts = fileName.split('.');
       let length = parts.length;
       if ( length > 1) {
@@ -85,38 +95,45 @@ window.addEventListener("load", () => {
       } else {
         fileName = fileName + timestamp;
       }
-
-      appendAttachmentOutboundMessageToChatList(chatList, originalFileName, SERVER_URL + "/uploads/" + fileName);
     }
 
     // Add outbound message in chatList and clear the message box contect and attachment if any after submit the request
     let messageInputBox = messageForm.elements.message;
-    appendOutboundMessageToChatList(chatList, messageInputBox.value);
+    appendOutboundMessageToChatList(messageInputBox.value, originalFileName, fileName);
     messageInputBox.value = '';
     messageForm.elements.attachment.value = null;
+
+    typingStartedReady = true;
   });
 
   // Register message input input event listener to send TypingStartedIndicator request
   document.getElementById("message").addEventListener("input", (e) => {
-    let formData = new FormData(messageForm);
-    formData.append("interactionType", "EntryInteraction");
-    formData.append("entryType", "TypingStartedIndicator");
-    formData.delete("attachment");
+    if (typingStartedReady) {
+      let formData = new FormData(messageForm);
+      formData.append("interactionType", "EntryInteraction");
+      formData.append("entryType", "TypingStartedIndicator");
+      formData.delete("attachment");
 
-    // submit the request to middleware server
-    axios({
-        method: "post",
-        url: SERVER_URL + "/sendmessage",
-        data: formData
-    })
-    .then((res) => {
-      if (res.status == 200) {
-        console.log(res);
-      }
-    })
-    .catch((err) => {
-        throw err;
-    });
+      // submit the request to middleware server
+      axios({
+          method: "post",
+          url: SERVER_URL + "/sendmessage",
+          data: formData
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          console.log(res);
+        }
+      })
+      .catch((err) => {
+          throw err;
+      });
+
+      typingStartedReady = false;
+      setTimeout(function() {
+        typingStartedReady = true;
+      }, 5000);
+    }
   });
 
   // Register custom event to retrieve the replied message from an agent in core app
@@ -124,7 +141,7 @@ window.addEventListener("load", () => {
   evtSource.addEventListener("replymsg", (e) => {
     console.log('\n=============== EventSource - replymsg event:', e.data);
     let replyObj = JSON.parse(e.data);
-    appendInboundMessageToChatList(chatList, replyObj);
+    appendInboundMessageToChatList(replyObj.replyMessageText, replyObj.attachmentName, replyObj.attachmentUrl);
   });
 
   // get settings from middleware server
@@ -142,14 +159,23 @@ window.addEventListener("load", () => {
       document.getElementById("customEventChnlAddrIdField").value = settings.customEventChnlAddrIdField;
       document.getElementById("customEventPayloadField").value = settings.customEventPayloadField;
       document.getElementById("customEventRecipientField").value = settings.customEventRecipientField;
+
+      sfSubject = settings.sfSubject.split('@').shift();
+      endUserClientName = settings.endUserClientIdentifier;
     }
   })
   .catch((err) => {
       throw err;
   });
+
+  chatList = document.getElementById('chatList');
 });
 
-function appendOutboundMessageToChatList(chatList, message) {
+function appendOutboundMessageToChatList(message, originalFileName, fileName) {
+  if (originalFileName && fileName) {
+    appendAttachmentOutboundMessageToChatList(originalFileName, SERVER_URL + "/uploads/" + fileName);
+  }
+
   let outboundMessageHTMLElem = generateOutboundMessageHTMLElem(message);
 
   appendMessageToChatList(outboundMessageHTMLElem);
@@ -166,7 +192,7 @@ function generateOutboundMessageHTMLElem(message) {
     '        <span>' + message +
     '        </span>' +
     '      </div>' +
-    '      <div class="slds-chat-message__meta" aria-label="said End User at ' + dateTime + '">End User • ' + dateTime + '</div>' +
+    '      <div class="slds-chat-message__meta" aria-label="said ' + endUserClientName + ' at ' + dateTime + '">' + endUserClientName + ' • ' + dateTime + '</div>' +
     '    </div>' +
     '  </div>' +
     '</li>';
@@ -174,7 +200,7 @@ function generateOutboundMessageHTMLElem(message) {
   return htmlToElem(html);
 }
 
-function appendAttachmentOutboundMessageToChatList(chatList, fileName, fileUrl) {
+function appendAttachmentOutboundMessageToChatList(fileName, fileUrl) {
   let attachmentOutboundMessageHTMLElem = generateAttachmentForOutboundMessageHTMLElem(fileName, fileUrl);
 
   appendMessageToChatList(attachmentOutboundMessageHTMLElem);
@@ -212,7 +238,7 @@ function generateAttachmentForOutboundMessageHTMLElem(fileName, fileUrl) {
     '          </figure>' +
     '        </div>' +
     '      </div>' +
-    '      <div class="slds-chat-message__meta" aria-label="said End User at ' + dateTime + '">End User • ' + dateTime + '</div>' +
+    '      <div class="slds-chat-message__meta" aria-label="said ' + endUserClientName + ' at ' + dateTime + '">' + endUserClientName + ' • ' + dateTime + '</div>' +
     '    </div>' +
     '  </div>' +
     '</li>';
@@ -220,19 +246,19 @@ function generateAttachmentForOutboundMessageHTMLElem(fileName, fileUrl) {
   return htmlToElem(html);
 }
 
-function appendInboundMessageToChatList(chatList, replyObj) {
-  let channelAddressIdFieldVal = replyObj.channelAddressIdFieldVal;
-  let message = replyObj.replyMessageText;
-  let recipientUserName = replyObj.recipientUserName;
+function appendInboundMessageToChatList(message, attachmentName, attachmentUrl) {
+  if (attachmentName && attachmentUrl) {
+    appendAttachmentInboundMessageToChatList(attachmentName, attachmentUrl);
+  }
 
   if (!message) return;
 
-  let inboundMessageHTMLElem = generateInboundMessageHTMLElem(message, recipientUserName);
+  let inboundMessageHTMLElem = generateInboundMessageHTMLElem(message, attachmentName, attachmentUrl);
 
   appendMessageToChatList(inboundMessageHTMLElem);
 }
 
-function generateInboundMessageHTMLElem(message, recipientUserName) {
+function generateInboundMessageHTMLElem(message, attachmentName, attachmentUrl) {
   let now  = new Date();
   let dateTime = now.toLocaleString();
   let html =
@@ -243,7 +269,53 @@ function generateInboundMessageHTMLElem(message, recipientUserName) {
     '        <span>' + message +
     '        </span>' +
     '      </div>' +
-    '      <div class="slds-chat-message__meta" aria-label="said ' + recipientUserName + ' at ' + dateTime + '">'+ recipientUserName + ' • ' + dateTime + '</div>' +
+    '      <div class="slds-chat-message__meta" aria-label="said ' + sfSubject + ' at ' + dateTime + '">'+ sfSubject + ' • ' + dateTime + '</div>' +
+    '    </div>' +
+    '  </div>' +
+    '</li>';
+
+  return htmlToElem(html);
+}
+
+function appendAttachmentInboundMessageToChatList(fileName, fileUrl) {
+  let attachmentInboundMessageHTMLElem = generateAttachmentForInboundMessageHTMLElem(fileName, fileUrl);
+
+  appendMessageToChatList(attachmentInboundMessageHTMLElem);
+}
+
+function generateAttachmentForInboundMessageHTMLElem(fileName, fileUrl) {
+  let now  = new Date();
+  let dateTime = now.toLocaleString();
+  let html =
+    '<li class="slds-chat-listitem slds-chat-listitem_inbound">' +
+    '  <div class="slds-chat-message">' +
+    '    <div class="slds-chat-message__body">' +
+    '      <div class="slds-chat-message__file slds-chat-message__file_inbound">' +
+    '        <div class="slds-file slds-has-title">' +
+    '          <figure>' +
+    '            <a href="' + fileUrl + '" class="slds-file__crop slds-file__crop_4-by-3" target="_blank">' +
+    '              <span class="slds-assistive-text">Preview:</span>' +
+    '              <img src="/slds/images/placeholder-img@16x9.jpg" alt="Attachment" />' +
+    '            </a>' +
+    '            <figcaption class="slds-file__title slds-file__title_card slds-file-has-actions">' +
+    '              <div class="slds-media slds-media_small slds-media_center">' +
+    '                <div class="slds-media__figure slds-line-height_reset">' +
+    '                  <span class="slds-icon_container" title="file">' +
+    '                    <svg class="slds-icon slds-icon_x-small" aria-hidden="true">' +
+    '                      <use xlink:href="/slds/icons/doctype-sprite/svg/symbols.svg#attachment"></use>' +
+    '                    </svg>' +
+    '                    <span class="slds-assistive-text">file</span>' +
+    '                  </span>' +
+    '                </div>' +
+    '                <div class="slds-media__body">' +
+    '                  <span class="slds-file__text slds-truncate" title="' + fileName + '">' + fileName + '</span>' +
+    '                </div>' +
+    '              </div>' +
+    '            </figcaption>' +
+    '          </figure>' +
+    '        </div>' +
+    '      </div>' +
+    '      <div class="slds-chat-message__meta" aria-label="said ' + sfSubject + ' at ' + dateTime + '">' + sfSubject + ' • ' + dateTime + '</div>' +
     '    </div>' +
     '  </div>' +
     '</li>';
