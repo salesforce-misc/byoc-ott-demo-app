@@ -29,6 +29,8 @@ window.addEventListener("load", () => {
     .then((res) => {
       if (res.status == 200) {
         console.log(res);
+        endUserClientName = formData.endUserClientIdentifier;
+
         let msgBanner = document.getElementById("demo-app-setup-msg-banner");
         let cssShow = "demo-app-setup-msg-banner-show";
         msgBanner.classList.add(cssShow);
