@@ -268,7 +268,7 @@ function generateInboundMessageHTMLElem(message, attachmentName, attachmentUrl) 
     '  <div class="slds-chat-message">' +
     '    <div class="slds-chat-message__body">' +
     '      <div class="slds-chat-message__text slds-chat-message__text_inbound">' +
-    '        <span>' + message +
+    '        <span>' + replaceURLsWithHyperLinks(message) +
     '        </span>' +
     '      </div>' +
     '      <div class="slds-chat-message__meta" aria-label="said ' + sfSubject + ' at ' + dateTime + '">'+ sfSubject + ' • ' + dateTime + '</div>' +
@@ -336,6 +336,18 @@ function appendMessageToChatList(htmlElem) {
   chatList.appendChild(htmlElem);
   chatList.scrollTop = chatList.scrollHeight;
   beep();
+}
+
+function replaceURLsWithHyperLinks(message) {
+  if(!message) return;
+
+  return message.replace(/((((https?|ftps?|file):\/\/)|(www\.))[^\s]+)/g, function (url) {
+    var hyperlink = url;
+    if (!hyperlink.match('^https?:\/\/')) {
+      hyperlink = 'http://' + hyperlink;
+    }
+    return '<a href="' + hyperlink + '" target="_blank">' + url + '</a>'
+  });
 }
 
 function beep() {
