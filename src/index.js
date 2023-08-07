@@ -245,9 +245,10 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
  
            // #3: retrieve recipient
           let recipientField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD);
+          let endUserClientIdentifierFromSettings = settingsCache.get("endUserClientIdentifier");
           console.log('\n====== recipientField: ', recipientField);
 
-          if (!recipientField) {
+          if (!recipientField || !recipientField.string) {
             return;
           }
 
@@ -257,6 +258,10 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
           let recipientUserName = getFieldValue(recipientFieldValObj, 'subject');
           console.log('\n====== recipientUserName: ', recipientUserName);
          
+          if (!recipientUserName || recipientUserName !== endUserClientIdentifierFromSettings) {
+            return;
+          }
+
           // Push stringfied reply obj
           let replyObjStr = JSON.stringify({
             channelAddressIdFieldVal,
