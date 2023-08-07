@@ -43,7 +43,7 @@ END_USER_CLIENT_IDENTIFIER=<End user client identifier>
 PORT=3000
 ```
 
-Note: The value of \<Salesforce core app scrt2 instance url\> above is an url with the pattern of "https://<mydomain>.my.salesforce-scrt.com"
+**Note**: The value of \<Salesforce core app scrt2 instance url\> above is an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com"
 
 ## Instructions for using demo app
 After load the url: http://localhost:3000 in browser, the demo app page is displayed with two parts: "Demo Settings" on left hand side and "Messaging component" on right hand side.
