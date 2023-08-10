@@ -92,6 +92,3 @@ Modify the fields value to test different custom channels, conversations, and en
 The messaging section of the UI lets you send inbound test messages and file attachments to Salesforce.
 
 To send a test message, type the message and click <b>Send</b>. To send a file attachment, click <b>Choose File</b>, select the file you want to attach, then click <b>Send</b>. Log into your Salesforce core app instance to view the inbound message in the Messaging Session record detail page.
-
-## Notes
-- TBA
