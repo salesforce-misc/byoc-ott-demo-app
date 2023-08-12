@@ -9,14 +9,14 @@
   <body>
 
     <div class="slds-grid slds-gutters demo-app-body">
-      <div class="slds-col slds-m-top_xx-large slds-m-bottom_xx-large slds-m-left_xx-large slds-m-right-small demo-app-setup-panel">
+      <div class="slds-col slds-m-top_large slds-m-bottom_xx-large slds-m-left_x-large slds-m-right-small demo-app-setup-panel">
 
-        <div class="slds-text-longform">
-          <h3 class="slds-text-heading_large">Inbound/Outbound Message Demo</h3>
-          <p class=".slds-text-body_regular">Welcome to our interactive demo page, designed to help you test the features of inbound and outbound messaging. To get started, customize the settings in the box below, and begin your conversation by texting in the conversation box on the right.</p>
+        <div class="slds-text-longform slds-m-top_medium">
+          <h3 class="slds-text-heading_large slds-truncate">Inbound/Outbound Message Demo</h3>
+          <p class="slds-text-body_regular demo-app-desc">Welcome to our interactive demo page, designed to help you test the features of inbound and outbound messaging. To get started, customize the settings in the box below, and begin your conversation by texting in the conversation box on the right.</p>
         </div>
 
-        <div class="slds-m-around_x-large">
+        <div class="slds-m-top_small slds-m-left_xx-small slds-m-right_xx-small slds-p-bottom_small">
 
           <article class="slds-card">
             <div class="demo-app-setup-msg-banner" id="demo-app-setup-msg-banner">
@@ -30,59 +30,71 @@
                   </span>
                 </div>
                 <div class="slds-media__body">
-                  <p>Success! Your settings has been updated.
+                  <p>Success! Your settings have been updated.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div class="slds-p-top_large slds-p-left_large slds-p-right_large slds-p-bottom_x-large demo-app-setup-form">
-              <div class="slds-card__header">
-                <header class="slds-media">
-                  <div class="slds-media__body">
-                    <h2 class="slds-card__header-title">
-                      <span>Demo Settings</span>
-                    </h2>
-                  </div>
-                </header>
-              </div>
+            <div class="slds-p-top_x-large slds-p-left_xx-small slds-p-right_small slds-p-bottom_large demo-app-setup-form">
+              <article class="slds-card">
+                <div class="slds-card__header slds-grid slds-p-bottom_small">
+                  <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                      <span class="slds-icon_container slds-icon-standard-settings" title="Settings">
+                        <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                          <use xlink:href="/slds/icons/standard-sprite/svg/symbols.svg#settings"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Settings</span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body">
+                      <h2 class="slds-card__header-title">
+                        <a href="#" class="slds-card__header-link slds-truncate" title="Settings">
+                          <span>Settings</span>
+                        </a>
+                      </h2>
+                    </div>
+                  </header>
+                </div>
+              </article>
 
               <form id="settingsForm"> 
                 <div class="slds-form slds-p-left_small">
                   <div class="slds-form-element slds-form-element_stacked">
-                    <label class="slds-form-element__label" for="authorizationContext">Conversation ChannelDefinition API Name:</label>
+                    <label class="slds-form-element__label slds-truncate" for="authorizationContext">ConversationChannelDefinition API Name:</label>
                     <div class="slds-form-element__control">
                       <input type="text" id="authorizationContext" name="authorizationContext" placeholder="Type ConversationChannelDefinition API Name…" class="slds-input" />
                     </div>
                   </div>
                   <div class="slds-form-element slds-form-element_stacked">
-                    <label class="slds-form-element__label" for="conversationAddressIdentifier">Conversation Address Identifier:</label>
+                    <label class="slds-form-element__label slds-truncate" for="conversationAddressIdentifier">Conversation Address Identifier:</label>
                     <div class="slds-form-element__control">
                       <input type="text" id="conversationAddressIdentifier" name="conversationAddressIdentifier" placeholder="Type Conversation Address Identifier…" class="slds-input" />
                     </div>
                   </div>
                   <div class="slds-form-element slds-form-element_stacked">
-                    <label class="slds-form-element__label" for="endUserClientIdentifier">End User Client Identifier:</label>
+                    <label class="slds-form-element__label slds-truncate" for="endUserClientIdentifier">End User Client Identifier:</label>
                     <div class="slds-form-element__control">
                       <input type="text" id="endUserClientIdentifier" name="endUserClientIdentifier" placeholder="Type End User Client Identifier…" class="slds-input" />
                     </div>
                   </div>
                   <div class="slds-form-element slds-form-element_stacked">
-                    <label class="slds-form-element__label" for="customEventChnlAddrIdField">Custom Event Channel Address Id Field:</label>
+                    <label class="slds-form-element__label slds-truncate" for="customEventChnlAddrIdField">ChannelAddressIdentifier Custom Field API Name:</label>
                     <div class="slds-form-element__control">
-                      <input type="text" id="customEventChnlAddrIdField" name="customEventChnlAddrIdField" placeholder="Type Custom Event Channel Address Id Field…" class="slds-input" />
+                      <input type="text" id="customEventChnlAddrIdField" name="customEventChnlAddrIdField" placeholder="Type CChannelAddressIdentifier Custom Field API Name…" class="slds-input" />
                     </div>
                   </div>
                   <div class="slds-form-element slds-form-element_stacked">
-                    <label class="slds-form-element__label" for="customEventPayloadField">Custom Event Payload Field:</label>
+                    <label class="slds-form-element__label slds-truncate" for="customEventPayloadField">Payload Custom Field API Name:</label>
                     <div class="slds-form-element__control">
-                      <input type="text" id="customEventPayloadField" name="customEventPayloadField" placeholder="Type Custom Event Payload Field…" class="slds-input" />
+                      <input type="text" id="customEventPayloadField" name="customEventPayloadField" placeholder="Type Payload Custom Field API Name…" class="slds-input" />
                     </div>
                   </div>
                   <div class="slds-form-element slds-form-element_stacked">
-                    <label class="slds-form-element__label" for="customEventRecipientField">Custom Event Recipient Field:</label>
+                    <label class="slds-form-element__label slds-truncate" for="customEventRecipientField">Recipient Custom Field API Name:</label>
                     <div class="slds-form-element__control">
-                      <input type="text" id="customEventRecipientField" name="customEventRecipientField" placeholder="Custom Event Recipient Field…" class="slds-input" />
+                      <input type="text" id="customEventRecipientField" name="customEventRecipientField" placeholder="Type Recipient Custom Field API Name…" class="slds-input" />
                     </div>
                   </div>
                   <div class="slds-form-element slds-form-element_stacked">
@@ -98,15 +110,36 @@
         </div>
 
       </div>
-      <div class="slds-col slds-m-top_xx-large slds-m-bottom_xx-large slds-m-left_small slds-m-right_xx-large demo-app-messaging-panel">
-        <div class="slds-box">
+      <div class="slds-col slds-m-top_large slds-m-bottom_xx-large slds-m-left_small slds-m-right_medium demo-app-messaging-panel">
+        <article class="slds-card slds-m-top_small">
+          <article class="slds-card">
+            <div class="slds-card__header slds-grid slds-border_bottom slds-p-bottom_small">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                  <span class="slds-icon_container slds-icon-standard-messaging-conversation" title="Conversation">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                      <use xlink:href="/slds/icons/standard-sprite/svg/symbols.svg#messaging_conversation"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Conversation</span>
+                  </span>
+                </div>
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <a href="#" class="slds-card__header-link slds-truncate" title="Conversation">
+                      <span>Conversation</span>
+                    </a>
+                  </h2>
+                </div>
+              </header>
+            </div>
+          </article>
           <section role="log" class="slds-chat">
-            <ul id="chatList" class="slds-chat-list slds-scrollable demo-app-message-list">
+            <ul id="chatList" class="slds-chat-list slds-scrollable demo-app-message-list slds-c-input-color-border">
             </ul>
           </section>
-        </div>
+        </article>
         <form id="messageForm" enctype="multipart/form-data"> 
-          <div class="slds-m-top_medium slds-m-bottom_medium flex-row">
+          <div class="slds-m-top_medium slds-m-bottom_medium slds-m-left_small slds-m-right_small flex-row">
             <input type="file" id="attachment" name="attachment">
               <!-- button class="slds-button slds-button_icon slds-button_icon-border slds-button_icon-medium" title="Attach a file">
                 <svg class="slds-button__icon" aria-hidden="true">
@@ -115,7 +148,7 @@
                 <span class="slds-assistive-text">Attach a file</span>
               </button -->
           </div>
-          <div class="slds-p-bottom_medium flex-row">
+          <div class="slds-p-bottom_medium slds-m-left_small slds-m-right_small flex-row">
             <div class="slds-form-element__control slds-grow demo-app-inbound-message-input">
               <input type="text" id="message" name="message" placeholder="Type message…" class="slds-input" />
             </div>

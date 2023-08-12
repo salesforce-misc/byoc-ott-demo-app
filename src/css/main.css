@@ -6,8 +6,14 @@ html {
   height: 100%;
 }
 
+.demo-app-desc {
+  max-height: 58px;
+  overflow: hidden;
+}
+
 .demo-app-setup-panel {
   width:35%;
+  background-color: #f3f2f2;
 }
 
 .demo-app-setup-form {
@@ -16,10 +22,12 @@ html {
 
 .demo-app-messaging-panel {
   width:65%;
+  background-color: #f3f2f2;
 }
 
 .demo-app-message-list {
-  height: 440px;
+  height: 542px;
+  background-color: #ffffff;
 }
 
 .demo-app-inbound-message-input {
