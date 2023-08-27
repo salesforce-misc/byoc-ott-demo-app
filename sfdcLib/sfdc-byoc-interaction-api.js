@@ -74,7 +74,6 @@ async function sendSFInboundMessageInteraction(orgId, authorizationContext, conv
       });
     }
 
-    fs.recipientUserName
     console.log(`\n====== sendSFInboundMessageInteraction() success for interactionType "${interactionType}": `, response.data);
     return response.data;
   })
