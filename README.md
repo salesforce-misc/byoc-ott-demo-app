@@ -1,5 +1,5 @@
 # BYOC Inbound/Outbound Message demo app
-This interactive demo app is designed to help you test the features of inbound/outbound messaging and attachment for inbound messages after your custom channel messaging configuration is done. It also allows you to customize the settings of "Conversation Channel Definition API Name", "Conversation Address Identifier", "End User Client Identifier", "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" to test different custom channels, conversations, and end users.
+This interactive demo app is designed to help you test the features of inbound/outbound messaging and attachment for inbound messages after your custom channel messaging configuration is done. It also allows you to customize the settings of "Conversation Channel Definition API Name", "Channel Address Identifier", "End User Client Identifier", "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" to test different custom channels, conversations, and end users.
 
 ## Setup
 
@@ -38,7 +38,7 @@ SF_INSTANCE_URL=<Salesforce core app instance url> [^1]
 SF_SCRT_INSTANCE_URL=<Salesforce core app scrt2 instance url> [^2]
 SF_ORG_ID=<orgId>
 SF_AUTHORIZATION_CONTEXT=<ConversationChannelDefinition API Name>
-CHANNEL_ADDRESS_IDENTIFIER=<Conversation address identifier>
+CHANNEL_ADDRESS_IDENTIFIER=<Channel address identifier>
 END_USER_CLIENT_IDENTIFIER=<End user client identifier>
 PORT=3000
 ```
