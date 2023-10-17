@@ -1,5 +1,5 @@
 # BYOC Inbound/Outbound Message demo app
-This interactive demo app is designed to help you test the features of inbound/outbound messaging and attachment for inbound messages after your custom channel messaging configuration is done. It also allows you to customize the settings of "Conversation Channel Definition API Name", "Conversation Address Identifier", "End User Client Identifier", "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" to test different custom channels, conversations, and end users.
+This interactive demo app is designed to help you test the features of inbound/outbound messaging and attachment for inbound messages after your custom channel messaging configuration is done. It also allows you to customize the settings of "Conversation Channel Definition API Name", "Channel Address Identifier", "End User Client Identifier", "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" to test different custom channels, conversations, and end users.
 
 ## Setup
 
@@ -38,7 +38,7 @@ SF_INSTANCE_URL=<Salesforce core app instance url> [^1]
 SF_SCRT_INSTANCE_URL=<Salesforce core app scrt2 instance url> [^2]
 SF_ORG_ID=<orgId>
 SF_AUTHORIZATION_CONTEXT=<ConversationChannelDefinition API Name>
-CONVERSATION_ADDRESS_IDENTIFIER=<Conversation address identifier>
+CHANNEL_ADDRESS_IDENTIFIER=<Channel address identifier> [^3]
 END_USER_CLIENT_IDENTIFIER=<End user client identifier>
 PORT=3000
 ```
@@ -46,6 +46,7 @@ PORT=3000
 **Note**: 
 - [^1] The value of \<Salesforce core app instance url\> above is an url with the pattern of "https://\<your org my domain name\>.my.salesforce.com".
 - [^2] The value of \<Salesforce core app scrt2 instance url\> above is an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com".
+- [^3] The value of \<Channel address identifier\> above is the value from field "ChannelAddressIdentifier" in corresponding MessagingChannel record.
 
 ## Instructions for using demo app
 After load the url: http://localhost:3000 in browser, the demo app page is displayed with two parts: "Demo Settings" on left hand side and "Messaging component" on right hand side.
