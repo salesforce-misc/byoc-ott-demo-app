@@ -16,21 +16,21 @@ const {
  * Sends a SF inbound message to Salesforce via the BYOC REST API.
  *
  * @param {string} orgId: The organization id for the login user
- * @param {string} authorizationContext: The AuthorizationContext which is ConversationChannelDefinition developer name for request authorization
- * @param {string} conversationAddressIdentifier: The conversation address identifier used for the inbound/outbound messaging
+ * @param {string} authorizationContext: The AuthorizationContext which is ChannelChannelDefinition developer name for request authorization
+ * @param {string} ChannelAddressIdentifier: The channel address identifier used for the inbound/outbound messaging
  * @param {string} endUserClientIdentifier: The end user client identifier used for the inbound/outbound messaging  
  * @param {string} message: The inbound message sent from a end user client to Salesforce
  * @param {object} attachment: The attachment
  * @returns {object} result object from interaction service with successful status or error code
  */
-async function sendSFInboundMessageInteraction(orgId, authorizationContext, conversationAddressIdentifier, endUserClientIdentifier, req) {
+async function sendSFInboundMessageInteraction(orgId, authorizationContext, channelAddressIdentifier, endUserClientIdentifier, req) {
   let message = req.body.message;
   let attachment = req.file;
   let timestamp = req.body.timestamp;
   console.log(`\n====== Start sendSFInboundMessageInteraction().\nmessage="${message}"\nattachment=${attachment}\ntimestamp=${timestamp}`);
 
   // Send 'TypingStoppedIndicator' request before send the message in order to remove typing indicator if any
-  sendSFInboundTypingIndicatorInteraction(orgId, authorizationContext, conversationAddressIdentifier, endUserClientIdentifier, 'TypingStoppedIndicator');
+  sendSFInboundTypingIndicatorInteraction(orgId, authorizationContext, channelAddressIdentifier, endUserClientIdentifier, 'TypingStoppedIndicator');
 
   const accessToken = await getAccessToken();
   let jsonData = {};
@@ -39,11 +39,11 @@ async function sendSFInboundMessageInteraction(orgId, authorizationContext, conv
   const entryId = uuidv4();
 
   if (attachment === undefined) {
-    jsonData = getSFInboundTextMessageFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, message);
+    jsonData = getSFInboundTextMessageFormData(entryId, channelAddressIdentifier, endUserClientIdentifier, message);
     interactionType = 'EntryInteraction';
   } else {
     formData.append('attachments', fs.createReadStream(__dirname + '/../' + attachment.path), attachment.originalname);
-    jsonData = getSFInboundAttachmentMessageFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, message, attachment.size);
+    jsonData = getSFInboundAttachmentMessageFormData(entryId, channelAddressIdentifier, endUserClientIdentifier, message, attachment.size);
     interactionType = 'AttachmentInteraction';
   }
 
@@ -84,7 +84,7 @@ async function sendSFInboundMessageInteraction(orgId, authorizationContext, conv
     }
 
     let responseData = error.response.data;
-    sendSFInboundMessageDeliveryFailedInteraction(entryId, interactionType, orgId, authorizationContext, conversationAddressIdentifier, endUserClientIdentifier, responseData.code);
+    sendSFInboundMessageDeliveryFailedInteraction(entryId, interactionType, orgId, authorizationContext, channelAddressIdentifier, endUserClientIdentifier, responseData.code);
 
     console.log(`\n====== sendSFInboundMessageInteraction() error for interactionType "${interactionType}": `, responseData);
     return error;
@@ -97,15 +97,15 @@ async function sendSFInboundMessageInteraction(orgId, authorizationContext, conv
  * Sends a SF inbound TypingStartedIndicator to Salesforce via the BYOC REST API.
  *
  * @param {string} orgId: The organization id for the login user
- * @param {string} authorizationContext: The AuthorizationContext which is ConversationChannelDefinition developer name for request authorization
- * @param {string} conversationAddressIdentifier: The conversation address identifier used for the inbound/outbound messaging
+ * @param {string} authorizationContext: The AuthorizationContext which is ChannelChannelDefinition developer name for request authorization
+ * @param {string} channelAddressIdentifier: The channel address identifier used for the inbound/outbound messaging
  * @param {string} endUserClientIdentifier: The end user client identifier used for the inbound/outbound messaging  
  * @returns {object} result object from interaction service with successful status or error code
  */
-async function sendSFInboundTypingIndicatorInteraction(orgId, authorizationContext, conversationAddressIdentifier, endUserClientIdentifier, entryType) {
+async function sendSFInboundTypingIndicatorInteraction(orgId, authorizationContext, channelAddressIdentifier, endUserClientIdentifier, entryType) {
   console.log(`\n====== Start sendSFInboundTypingIndicatorInteraction() with entryType: ${entryType}.`);
   const accessToken = await getAccessToken();
-  let jsonData = getSFInboundTypingIndicatorFormData(conversationAddressIdentifier, endUserClientIdentifier, entryType);
+  let jsonData = getSFInboundTypingIndicatorFormData(channelAddressIdentifier, endUserClientIdentifier, entryType);
 
   const requestHeader = getInboundMessageRequestHeader(accessToken, orgId, authorizationContext);
 
@@ -140,15 +140,15 @@ async function sendSFInboundTypingIndicatorInteraction(orgId, authorizationConte
  *
  * @param {string} entryId: The entryId for the failed message delivery
  * @param {string} orgId: The organization id for the login user
- * @param {string} authorizationContext: The AuthorizationContext which is ConversationChannelDefinition developer name for request authorization
- * @param {string} conversationAddressIdentifier: The conversation address identifier used for the inbound/outbound messaging
+ * @param {string} authorizationContext: The AuthorizationContext which is ChannelChannelDefinition developer name for request authorization
+ * @param {string} channelAddressIdentifier: The channel address identifier used for the inbound/outbound messaging
  * @param {string} endUserClientIdentifier: The end user client identifier used for the inbound/outbound messaging  
  * @returns {object} result object from interaction service with successful status or error code
  */
-async function sendSFInboundMessageDeliveryFailedInteraction(entryId, interactionType, orgId, authorizationContext, conversationAddressIdentifier, endUserClientIdentifier, errorCode) {
+async function sendSFInboundMessageDeliveryFailedInteraction(entryId, interactionType, orgId, authorizationContext, channelAddressIdentifier, endUserClientIdentifier, errorCode) {
   console.log(`\n====== Start sendSFInboundMessageDeliveryFailedInteraction() for interactionType: "${interactionType}" and entryId: "${entryId}".`);
   const accessToken = await getAccessToken();
-  let jsonData = getSFInboundMessageDeliveryFailedFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, errorCode);
+  let jsonData = getSFInboundMessageDeliveryFailedFormData(entryId, channelAddressIdentifier, endUserClientIdentifier, errorCode);
 
   const requestHeader = getInboundMessageRequestHeader(accessToken, orgId, authorizationContext);
 
@@ -174,9 +174,9 @@ async function sendSFInboundMessageDeliveryFailedInteraction(entryId, interactio
   return responseData;
 }
 
-function getSFInboundTextMessageFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, message) {
+function getSFInboundTextMessageFormData(entryId, channelAddressIdentifier, endUserClientIdentifier, message) {
   return {
-    "to": conversationAddressIdentifier,
+    "to": channelAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
       "timestamp": 1688190840000,
@@ -197,9 +197,9 @@ function getSFInboundTextMessageFormData(entryId, conversationAddressIdentifier,
   };
 }
 
-function getSFInboundAttachmentMessageFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, message, contentLength) {
+function getSFInboundAttachmentMessageFormData(entryId, channelAddressIdentifier, endUserClientIdentifier, message, contentLength) {
   return {
-    "to": conversationAddressIdentifier,
+    "to": channelAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
       "timestamp": 1688190840000,
@@ -212,10 +212,10 @@ function getSFInboundAttachmentMessageFormData(entryId, conversationAddressIdent
   };
 }
 
-function getSFInboundTypingIndicatorFormData(conversationAddressIdentifier, endUserClientIdentifier, entryType) {
+function getSFInboundTypingIndicatorFormData(channelAddressIdentifier, endUserClientIdentifier, entryType) {
   const uuid = uuidv4();
   return {
-    "to": conversationAddressIdentifier,
+    "to": channelAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
       "timestamp": 1688190840000,
@@ -229,17 +229,17 @@ function getSFInboundTypingIndicatorFormData(conversationAddressIdentifier, endU
   };
 }
 
-function getSFInboundMessageDeliveryFailedFormData(entryId, conversationAddressIdentifier, endUserClientIdentifier, errorCode) {
+function getSFInboundMessageDeliveryFailedFormData(entryId, channelAddressIdentifier, endUserClientIdentifier, errorCode) {
   const uuid = uuidv4();
   return {
-    "to": conversationAddressIdentifier,
+    "to": channelAddressIdentifier,
     "from": endUserClientIdentifier,
     "interactions": [{
       "timestamp": 1688190840000,
       "interactionType": "EntryInteraction",
       "payload": {
         "id": uuid,
-        "failedConversationEntryIdentifier": entryId,
+        "failedChannelEntryIdentifier": entryId,
         "entryType": "MessageDeliveryFailed",
         "recipient": {
            "appType": "11",

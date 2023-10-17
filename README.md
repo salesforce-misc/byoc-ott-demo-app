@@ -38,7 +38,7 @@ SF_INSTANCE_URL=<Salesforce core app instance url> [^1]
 SF_SCRT_INSTANCE_URL=<Salesforce core app scrt2 instance url> [^2]
 SF_ORG_ID=<orgId>
 SF_AUTHORIZATION_CONTEXT=<ConversationChannelDefinition API Name>
-CONVERSATION_ADDRESS_IDENTIFIER=<Conversation address identifier>
+CHANNEL_ADDRESS_IDENTIFIER=<Conversation address identifier>
 END_USER_CLIENT_IDENTIFIER=<End user client identifier>
 PORT=3000
 ```

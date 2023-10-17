@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
     // construct FormData object using html form
     let formData = {
       "authorizationContext": document.getElementById("authorizationContext").value,
-      "conversationAddressIdentifier": document.getElementById("conversationAddressIdentifier").value,
+      "channelAddressIdentifier": document.getElementById("channelAddressIdentifier").value,
       "endUserClientIdentifier": document.getElementById("endUserClientIdentifier").value,
       "customEventChnlAddrIdField": document.getElementById("customEventChnlAddrIdField").value,
       "customEventPayloadField": document.getElementById("customEventPayloadField").value,
@@ -156,7 +156,7 @@ window.addEventListener("load", () => {
       // set settings fields with values retrieved from middleware server
       let settings = res.data;
       document.getElementById("authorizationContext").value = settings.authorizationContext;
-      document.getElementById("conversationAddressIdentifier").value = settings.conversationAddressIdentifier;
+      document.getElementById("channelAddressIdentifier").value = settings.channelAddressIdentifier;
       document.getElementById("endUserClientIdentifier").value = settings.endUserClientIdentifier;
       document.getElementById("customEventChnlAddrIdField").value = settings.customEventChnlAddrIdField;
       document.getElementById("customEventPayloadField").value = settings.customEventPayloadField;

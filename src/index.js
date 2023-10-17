@@ -22,7 +22,7 @@ const {
   SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD,
   SF_ORG_ID,
   SF_AUTHORIZATION_CONTEXT,
-  CONVERSATION_ADDRESS_IDENTIFIER,
+  CHANNEL_ADDRESS_IDENTIFIER,
   END_USER_CLIENT_IDENTIFIER,
   SF_SUBJECT
 } = process.env;
@@ -30,7 +30,7 @@ const {
 // cache settings in node cache
 const settingsCache = new NodeCache();
 settingsCache.set("authorizationContext", SF_AUTHORIZATION_CONTEXT);
-settingsCache.set("conversationAddressIdentifier", CONVERSATION_ADDRESS_IDENTIFIER);
+settingsCache.set("channelAddressIdentifier", CHANNEL_ADDRESS_IDENTIFIER);
 settingsCache.set("endUserClientIdentifier", END_USER_CLIENT_IDENTIFIER);
 settingsCache.set("customEventChnlAddrIdField", SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD);
 settingsCache.set("customEventPayloadField", SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD);
@@ -71,7 +71,7 @@ app.post('/sendmessage', upload.single('attachment'), (req, res) => {
 // Register sendsettings endpoint
 app.post('/sendsettings', jsonParser, (req, res) => {
   settingsCache.set("authorizationContext", req.body.authorizationContext);
-  settingsCache.set("conversationAddressIdentifier", req.body.conversationAddressIdentifier);
+  settingsCache.set("channelAddressIdentifier", req.body.channelAddressIdentifier);
   settingsCache.set("endUserClientIdentifier", req.body.endUserClientIdentifier);
   settingsCache.set("customEventChnlAddrIdField", req.body.customEventChnlAddrIdField);
   settingsCache.set("customEventPayloadField", req.body.customEventPayloadField);
@@ -84,7 +84,7 @@ app.post('/sendsettings', jsonParser, (req, res) => {
 app.get('/getsettings', urlencodedParser, (req, res) => {
   const responseData = {
     authorizationContext: SF_AUTHORIZATION_CONTEXT,
-    conversationAddressIdentifier: CONVERSATION_ADDRESS_IDENTIFIER,
+    channelAddressIdentifier: CHANNEL_ADDRESS_IDENTIFIER,
     endUserClientIdentifier: END_USER_CLIENT_IDENTIFIER,
     customEventChnlAddrIdField: SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD,
     customEventPayloadField: SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD,
@@ -93,7 +93,7 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
   };
 
   let authorizationContext = settingsCache.get("authorizationContext");
-  let conversationAddressIdentifier = settingsCache.get("conversationAddressIdentifier");
+  let channelAddressIdentifier = settingsCache.get("channelAddressIdentifier");
   let endUserClientIdentifier = settingsCache.get("endUserClientIdentifier");
   let customEventChnlAddrIdField = settingsCache.get("customEventChnlAddrIdField");
   let customEventPayloadField = settingsCache.get("customEventPayloadField");
@@ -102,8 +102,8 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
   if (authorizationContext) {
     responseData.authorizationContext = authorizationContext;
   }
-  if (conversationAddressIdentifier) {
-    responseData.conversationAddressIdentifier = conversationAddressIdentifier;
+  if (channelAddressIdentifier) {
+    responseData.channelAddressIdentifier = channelAddressIdentifier;
   }
   if (endUserClientIdentifier) {
     responseData.endUserClientIdentifier = endUserClientIdentifier;
@@ -174,9 +174,9 @@ function handleSendmessage(req) {
   let interactionType = req.body.interactionType;
   let entryType = req.body.entryType;
   if (interactionType === 'AttachmentInteraction' || (interactionType === 'EntryInteraction' && entryType === 'Message')) {
-    responseData = sfdcByocApi.sendSFInboundMessageInteraction(SF_ORG_ID, settingsCache.get("authorizationContext"), settingsCache.get("conversationAddressIdentifier"), settingsCache.get("endUserClientIdentifier"), req);
+    responseData = sfdcByocApi.sendSFInboundMessageInteraction(SF_ORG_ID, settingsCache.get("authorizationContext"), settingsCache.get("channelAddressIdentifier"), settingsCache.get("endUserClientIdentifier"), req);
   } else if (interactionType === 'EntryInteraction' && entryType === 'TypingStartedIndicator') {
-    responseData = sfdcByocApi.sendSFInboundTypingIndicatorInteraction(SF_ORG_ID, settingsCache.get("authorizationContext"), settingsCache.get("conversationAddressIdentifier"), settingsCache.get("endUserClientIdentifier"), entryType);
+    responseData = sfdcByocApi.sendSFInboundTypingIndicatorInteraction(SF_ORG_ID, settingsCache.get("authorizationContext"), settingsCache.get("channelAddressIdentifier"), settingsCache.get("endUserClientIdentifier"), entryType);
   }
 
   return responseData;
@@ -206,10 +206,10 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
 
           // #1: retrieve channel address id
           let channelAddressIdField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD);
-          let conversationAddressIdFromSettings = settingsCache.get("conversationAddressIdentifier");
-          console.log('\n====== channelAddressIdField / conversationAddressIdFromSettings: ', ((channelAddressIdField && channelAddressIdField.string) ? channelAddressIdField.string: 'null'), conversationAddressIdFromSettings);
+          let channelAddressIdFromSettings = settingsCache.get("channelAddressIdentifier");
+          console.log('\n====== channelAddressIdField / channelAddressIdFromSettings: ', ((channelAddressIdField && channelAddressIdField.string) ? channelAddressIdField.string: 'null'), channelAddressIdFromSettings);
 
-          if (!channelAddressIdField || !channelAddressIdField.string || channelAddressIdField.string !== conversationAddressIdFromSettings) {
+          if (!channelAddressIdField || !channelAddressIdField.string || channelAddressIdField.string !== channelAddressIdFromSettings) {
             return;
           }
 
