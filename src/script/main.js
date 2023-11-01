@@ -17,7 +17,8 @@ window.addEventListener("load", () => {
       "endUserClientIdentifier": document.getElementById("endUserClientIdentifier").value,
       "customEventChnlAddrIdField": document.getElementById("customEventChnlAddrIdField").value,
       "customEventPayloadField": document.getElementById("customEventPayloadField").value,
-      "customEventRecipientField": document.getElementById("customEventRecipientField").value
+      "customEventRecipientField": document.getElementById("customEventRecipientField").value,
+      "customEventTypeField": document.getElementById("customEventTypeField").value
     };
 
     // submit the request to middleware server
@@ -161,6 +162,7 @@ window.addEventListener("load", () => {
       document.getElementById("customEventChnlAddrIdField").value = settings.customEventChnlAddrIdField;
       document.getElementById("customEventPayloadField").value = settings.customEventPayloadField;
       document.getElementById("customEventRecipientField").value = settings.customEventRecipientField;
+      document.getElementById("customEventTypeField").value = settings.customEventTypeField;
 
       sfSubject = settings.sfSubject.split('@').shift();
       endUserClientName = settings.endUserClientIdentifier;

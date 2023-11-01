@@ -20,6 +20,7 @@ const {
   SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD,
   SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD,
   SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD,
+  SF_PUB_SUB_CUSTOM_EVENT_TYPE_FIELD,
   SF_ORG_ID,
   SF_AUTHORIZATION_CONTEXT,
   CHANNEL_ADDRESS_IDENTIFIER,
@@ -35,6 +36,7 @@ settingsCache.set("endUserClientIdentifier", END_USER_CLIENT_IDENTIFIER);
 settingsCache.set("customEventChnlAddrIdField", SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD);
 settingsCache.set("customEventPayloadField", SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD);
 settingsCache.set("customEventRecipientField", SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD);
+settingsCache.set("customEventTypeField", SF_PUB_SUB_CUSTOM_EVENT_TYPE_FIELD);
 
 const port = PORT || 3000;
 
@@ -76,6 +78,7 @@ app.post('/sendsettings', jsonParser, (req, res) => {
   settingsCache.set("customEventChnlAddrIdField", req.body.customEventChnlAddrIdField);
   settingsCache.set("customEventPayloadField", req.body.customEventPayloadField);
   settingsCache.set("customEventRecipientField", req.body.customEventRecipientField);
+  settingsCache.set("customEventTypeField", req.body.customEventTypeField);
 
   res.json('{}');
 });
@@ -89,6 +92,7 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
     customEventChnlAddrIdField: SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD,
     customEventPayloadField: SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD,
     customEventRecipientField: SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD,
+    customEventTypeField: SF_PUB_SUB_CUSTOM_EVENT_TYPE_FIELD,
     sfSubject: SF_SUBJECT
   };
 
@@ -98,6 +102,7 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
   let customEventChnlAddrIdField = settingsCache.get("customEventChnlAddrIdField");
   let customEventPayloadField = settingsCache.get("customEventPayloadField");
   let customEventRecipientField = settingsCache.get("customEventRecipientField");
+  let customEventTypeField = settingsCache.get("customEventTypeField");
 
   if (authorizationContext) {
     responseData.authorizationContext = authorizationContext;
@@ -116,6 +121,9 @@ app.get('/getsettings', urlencodedParser, (req, res) => {
   }
   if (customEventRecipientField) {
     responseData.customEventRecipientField = customEventRecipientField;
+  }
+  if (customEventTypeField) {
+    responseData.customEventTypeField = customEventTypeField;
   }
 
   res.json(responseData);
@@ -204,30 +212,88 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
         parsedEvents.forEach((event) => {
           console.log('\n====== gRPC event: ', event);
 
-          // #1: retrieve channel address id
-          let channelAddressIdField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD);
-          let channelAddressIdFromSettings = settingsCache.get("channelAddressIdentifier");
-          console.log('\n====== channelAddressIdField / channelAddressIdFromSettings: ', ((channelAddressIdField && channelAddressIdField.string) ? channelAddressIdField.string: 'null'), channelAddressIdFromSettings);
+          // #1: retrieve event type
+          let eventTypeField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_TYPE_FIELD);
+          let customEventTypeFieldFromSettings = settingsCache.get("customEventTypeField");
+          console.log('\n====== customEventTypeField / customEventTypeFieldFromSettings: ', ((eventTypeField && eventTypeField.string) ? eventTypeField.string: 'null'), customEventTypeFieldFromSettings);
 
-          if (!channelAddressIdField || !channelAddressIdField.string || channelAddressIdField.string !== channelAddressIdFromSettings) {
-            return;
+          let channelAddressIdFieldVal = null;
+          let payloadFieldObj = null;
+          let recipientFieldValObj = null;
+
+          if (eventTypeField && eventTypeField.string) {
+            console.log('\n====== customEventType found in received platform event ========');
+
+            if (eventTypeField.string == "Interaction") {
+              // #1: retrieve event payload
+              let payloadField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD);
+              console.log('\n====== payloadField: ', payloadField);
+              if (!payloadField) {
+                return;
+              }
+              let payloadFieldVal = payloadField.string;
+              console.log('\n====== payloadFieldVal: ', payloadFieldVal);
+              let outerPayloadFieldObj = JSON.parse(payloadFieldVal);
+              payloadFieldObj = getFieldValue(outerPayloadFieldObj, 'payload');
+              console.log('\n====== messagePayload: ', payloadFieldObj);
+
+              // #2: retrieve channel address id
+              channelAddressIdFieldVal = getFieldValue(outerPayloadFieldObj, 'channelAddressIdentifier');
+              if (!channelAddressIdFieldVal) {
+                return;
+              }
+
+              // #3: retrieve recipient
+              recipientFieldValObj = getFieldValue(outerPayloadFieldObj, 'recipient');
+              if (!recipientFieldValObj) {
+                return;
+              }
+            } else {
+              console.log('\n====== Event type not supported: ', eventTypeField.string);
+              return;
+            }
+          } else {
+            //This section is to support the old schema which will be deprecated in Spring '24 and support removed in Summer '24.
+            //TODO: Remove this section in 250.
+
+            // #1: retrieve channel address id
+            let channelAddressIdField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_CHANNEL_ADDRESS_ID_FIELD);
+            if (!channelAddressIdField) {
+              return;
+            }
+            channelAddressIdFieldVal = channelAddressIdField.string;
+
+            // #2: retrieve event payload
+            let payloadField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD);
+            console.log('\n====== payloadField: ', payloadField);
+            if (!payloadField) {
+              return;
+            }
+            let payloadFieldVal = payloadField.string;
+            console.log('\n====== payloadFieldVal: ', payloadFieldVal);
+            payloadFieldObj = JSON.parse(payloadFieldVal);
+
+            // #3: retrieve recipient
+            let recipientField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD);
+            let endUserClientIdentifierFromSettings = settingsCache.get("endUserClientIdentifier");
+            console.log('\n====== recipientField: ', recipientField);
+            if (!recipientField || !recipientField.string) {
+              return;
+            }
+            let recipientFieldVal = recipientField.string;
+            console.log('\n====== recipientFieldVal: ', recipientFieldVal);
+            recipientFieldValObj = JSON.parse(recipientFieldVal);
           }
 
-          let channelAddressIdFieldVal = channelAddressIdField.string;
+          let channelAddressIdFromSettings = settingsCache.get("channelAddressIdentifier");
+          console.log('\n====== channelAddressIdField / channelAddressIdFromSettings: ', channelAddressIdFieldVal, channelAddressIdFromSettings);
+
+          if (!channelAddressIdFieldVal || channelAddressIdFieldVal !== channelAddressIdFromSettings) {
+            return;
+          }
           console.log('\n====== channelAddressIdFieldVal: ', channelAddressIdFieldVal);
 
-          // #2: retrieve event payload
-          let payloadField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_PAYLOAD_FIELD);
-          console.log('\n====== payloadField: ', payloadField);
-
-          if (!payloadField) {
-            return;
-          }
-
-          let payloadFieldVal = payloadField.string;
-          console.log('\n====== payloadFieldVal: ', payloadFieldVal);
-          let payloadFieldObj = JSON.parse(payloadFieldVal);
-          let replyMessageText = getFieldValue(payloadFieldObj, 'text');
+          replyMessageText = getFieldValue(payloadFieldObj, 'text');
           console.log('\n====== replyMessageText: ', replyMessageText);
 
           let formatType = getFieldValue(payloadFieldObj, "formatType");
@@ -241,27 +307,16 @@ async function subscribeToSfInteractionEvent(sfdcPubSubClient) {
             }
           }
           console.log('\n====== attachmentName / attachmentUrl: ', attachmentName, attachmentUrl);
-
- 
-           // #3: retrieve recipient
-          let recipientField = getFieldValue(event, SF_PUB_SUB_CUSTOM_EVENT_RECIPIENT_FIELD);
-          let endUserClientIdentifierFromSettings = settingsCache.get("endUserClientIdentifier");
-          console.log('\n====== recipientField: ', recipientField);
-
-          if (!recipientField || !recipientField.string) {
-            return;
-          }
-
-          let recipientFieldVal = recipientField.string;
-          console.log('\n====== recipientFieldVal: ', recipientFieldVal);
-          let recipientFieldValObj = JSON.parse(recipientFieldVal);
+          
+          console.log('\n====== recipientField: ', recipientFieldValObj);
           let recipientUserName = getFieldValue(recipientFieldValObj, 'subject');
           console.log('\n====== recipientUserName: ', recipientUserName);
+          let endUserClientIdentifierFromSettings = settingsCache.get("endUserClientIdentifier");
          
           if (!recipientUserName || recipientUserName !== endUserClientIdentifierFromSettings) {
             return;
           }
-
+        
           // Push stringfied reply obj
           let replyObjStr = JSON.stringify({
             channelAddressIdFieldVal,
