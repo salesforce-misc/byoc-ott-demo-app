@@ -54,3 +54,6 @@ After load the url: http://localhost:3000 in browser, the demo app page is displ
 In "Demo Settings" part, you can change values for fields and click the Update button to apply updated settings to test different custom channels, conversations, and end users.
 
 In "Messaging component" part, enter a message string in the edit box, click Send button to send inbound messages. You can also click the Choose File button to select a file attached to the message. If all settings are configured properly in the Salesforce app, you should get an inbound message or message with attachment in the Messaging Session record detail page in the Salesforce app.
+
+## Additional Notes
+Use of the code in this repository with Salesforce products or services should be used in accordance with any applicable developers guides on [developer.salesforce.com](https://developer.salesforce.com/) and may be subject to additional terms of use, including but not limited to the [Salesforce Program Agreement - Program Terms for the Salesforce Developers Program](https://www.salesforce.com/company/program-agreement/#devs).
