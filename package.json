@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.soma.salesforce.com/BYOC/byoc-ott-demo-app"
+    "url": "https://github.com/salesforce-misc/byoc-ott-demo-app"
   },
   "keywords": [
     "byoc"
