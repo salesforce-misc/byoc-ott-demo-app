@@ -39,7 +39,6 @@ function generateJWT(payload, expiresIn, privateKey) {
  */
 async function getAccessToken(refresh) {
   if (refresh || !cachedAccessToken) {
-    // TODO: The console logs will be refactored in next story W-13133225
     console.log(`\n====== Obtain a new access token.`);
     // Obtain a new access token.
     const consumerKey = SF_CONSUMER_KEY;
