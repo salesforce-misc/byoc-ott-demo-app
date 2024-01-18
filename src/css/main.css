@@ -1,0 +1,55 @@
+html {
+  background: white;
+}
+
+.demo-app-body {
+  height: 100%;
+}
+
+.demo-app-desc {
+  max-height: 58px;
+  overflow: hidden;
+}
+
+.demo-app-setup-panel {
+  width:35%;
+  background-color: #f3f2f2;
+}
+
+.demo-app-setup-form {
+  margin-top: -30px;
+}
+
+.demo-app-messaging-panel {
+  width:65%;
+  background-color: #f3f2f2;
+}
+
+.demo-app-message-list {
+  height: 542px;
+  background-color: #ffffff;
+}
+
+.demo-app-inbound-message-input {
+  width:calc(100% - 75px);
+}
+
+.demo-app-inbound-message-send-btn {
+  margin-top: -32px;
+}
+
+.demo-app-setup-msg-banner, demo-app-setup-msg-banner-show {
+  height:45px;
+  width: 100%;
+  overflow: hidden;
+}
+.demo-app-setup-msg {
+  bottom: 100%;
+  position: relative;
+  transition: all .3s ease-out;
+  height: 100%;
+}
+
+.demo-app-setup-msg-banner-show > .demo-app-setup-msg{
+  bottom: 0;
+}
