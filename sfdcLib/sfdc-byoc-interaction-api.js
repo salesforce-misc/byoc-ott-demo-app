@@ -242,9 +242,9 @@ function getSFInboundMessageDeliveryFailedFormData(entryId, channelAddressIdenti
         "failedChannelEntryIdentifier": entryId,
         "entryType": "MessageDeliveryFailed",
         "recipient": {
-           "appType": "11",
+           "appType": "custom",
            "subject": endUserClientIdentifier,
-           "role": "4"
+           "role": "EndUser"
         },
         "errorCode": ""+errorCode
       }
